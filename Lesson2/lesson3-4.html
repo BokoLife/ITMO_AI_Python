@@ -1,0 +1,810 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Python Lesson 2.3 — ветвления, циклы, функции, lambda, ООП, исключения</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 24px; line-height: 1.35; }
+    .wrap { max-width: 1100px; margin: 0 auto; }
+    h1 { font-size: 22px; margin: 0 0 10px; }
+    h2 { font-size: 18px; margin: 0 0 8px; }
+    h3 { font-size: 16px; margin: 0 0 6px; }
+    .muted { color: #666; font-size: 13px; }
+    .tabs { display:flex; gap:8px; margin: 14px 0; flex-wrap: wrap; }
+    .tab { padding: 8px 12px; border: 1px solid #ccc; border-radius: 10px; cursor: pointer; user-select: none; }
+    .tab.active { border-color: #000; font-weight: 600; }
+    .subtabs { display:flex; gap:8px; margin: 10px 0 0; flex-wrap: wrap; }
+    .subtab { padding: 6px 10px; border: 1px solid #ddd; border-radius: 999px; cursor: pointer; user-select: none; font-size: 13px; }
+    .subtab.active { border-color: #000; font-weight: 600; }
+    .card { border: 1px solid #ddd; border-radius: 14px; padding: 14px; margin: 12px 0; }
+    .row { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 920px) { .row { grid-template-columns: 1fr; } }
+    label { display:block; font-weight:600; margin: 8px 0 6px; }
+    input, select, button, textarea {
+      width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ccc; font-size: 14px;
+    }
+    textarea { min-height: 90px; }
+    button { cursor:pointer; }
+    pre { background:#f7f7f7; padding: 10px; border-radius: 12px; overflow:auto; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .pill { display:inline-block; padding: 2px 10px; border-radius: 999px; border: 1px solid #ddd; font-size: 12px; }
+    .ok { color:#0a7; font-weight: 700; }
+    .bad { color:#c33; font-weight: 700; }
+    .hr { height: 1px; background:#eee; margin: 12px 0; }
+    .note { background:#fff7e6; border:1px solid #ffe2a8; padding:10px; border-radius:12px; }
+    .grid3 { display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    @media (max-width: 920px) { .grid3 { grid-template-columns: 1fr; } }
+    .small { font-size: 12px; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Lesson 2.3 — Ветвления → циклы → функции → lambda → ООП → исключения</h1>
+  <div class="muted">Формат как в lesson 1.2: теория → “потрогать руками” → самопроверка.</div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="theory">Теория</div>
+    <div class="tab" data-tab="play">Поиграть</div>
+    <div class="tab" data-tab="quiz">Самопроверка</div>
+  </div>
+
+  <!-- ===================== THEORY ===================== -->
+  <section id="theory" class="panel">
+    <div class="card">
+      <h2>Темы на 2 пары</h2>
+      <div class="note">
+        <b>Цель:</b> научиться читать и писать базовую “логику программы”: условия, повторения, функции. Плюс — совсем минимально: класс, метод, try/except.
+      </div>
+
+      <div class="subtabs">
+        <div class="subtab active" data-sub="t_if">Ветвления</div>
+        <div class="subtab" data-sub="t_loops">Циклы</div>
+        <div class="subtab" data-sub="t_func">Функции</div>
+        <div class="subtab" data-sub="t_lambda">Lambda</div>
+        <div class="subtab" data-sub="t_oop">ООП (минимум)</div>
+        <div class="subtab" data-sub="t_exc">Исключения</div>
+      </div>
+    </div>
+
+    <div id="t_if" class="subpanel">
+      <div class="card">
+        <h2>Ветвления: if / elif / else</h2>
+        <ul>
+          <li><b>Условие</b> — выражение, которое даёт <code>True</code> или <code>False</code>.</li>
+          <li><b>Отступы</b> определяют блок кода (обычно 4 пробела).</li>
+          <li><code>elif</code> — “иначе если” (можно много раз), <code>else</code> — “иначе”.</li>
+        </ul>
+        <pre><code>x = int(input())
+if x &gt; 0:
+    print("плюс")
+elif x == 0:
+    print("ноль")
+else:
+    print("минус")</code></pre>
+
+        <h3>Полезные паттерны</h3>
+        <ul>
+          <li><b>Проверка диапазона:</b> <code>0 &lt;= x &lt;= 10</code></li>
+          <li><b>Логика:</b> <code>and</code>, <code>or</code>, <code>not</code></li>
+          <li><b>Тернарный оператор:</b> <code>msg = "ok" if x &gt;= 18 else "no"</code></li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="t_loops" class="subpanel" style="display:none;">
+      <div class="card">
+        <h2>Циклы: for / while</h2>
+        <h3>for + range</h3>
+        <pre><code>for i in range(5):
+    print(i)  # 0 1 2 3 4</code></pre>
+        <ul>
+          <li><code>range(n)</code> — 0..n-1</li>
+          <li><code>range(a, b)</code> — a..b-1</li>
+          <li><code>range(a, b, step)</code> — с шагом</li>
+        </ul>
+
+        <h3>while</h3>
+        <pre><code>x = 5
+while x &gt; 0:
+    print(x)
+    x -= 1</code></pre>
+
+        <h3>break / continue</h3>
+        <pre><code>for x in [1,2,3,4,5]:
+    if x == 3:
+        continue  # пропустить 3
+    if x == 5:
+        break     # остановиться
+    print(x)</code></pre>
+
+        <div class="note">
+          Самая частая ошибка новичка в <code>while</code> — забыть менять переменную → бесконечный цикл.
+        </div>
+      </div>
+    </div>
+
+    <div id="t_func" class="subpanel" style="display:none;">
+      <div class="card">
+        <h2>Функции</h2>
+        <ul>
+          <li>Функция — “упакованный кусок кода”, который можно вызвать много раз.</li>
+          <li><code>return</code> возвращает значение и заканчивает функцию.</li>
+          <li>Аргументы бывают позиционные и именованные.</li>
+        </ul>
+
+        <pre><code>def is_even(x):
+    return x % 2 == 0
+
+print(is_even(10))  # True</code></pre>
+
+        <h3>Значения по умолчанию</h3>
+        <pre><code>def greet(name="гость"):
+    return f"Привет, {name}!"
+
+print(greet())
+print(greet("Иван"))</code></pre>
+
+        <div class="note">
+          Мини-правило: функция должна делать <b>одну понятную вещь</b> и иметь понятное имя.
+        </div>
+      </div>
+    </div>
+
+    <div id="t_lambda" class="subpanel" style="display:none;">
+      <div class="card">
+        <h2>Lambda-функции (очень кратко)</h2>
+        <div class="note">
+          <b>lambda</b> — это “короткая функция в одну строку”. Часто используется как <b>ключ сортировки</b> или как “передать маленькое правило”.
+        </div>
+        <pre><code>nums = [5, 2, 9]
+nums_sorted = sorted(nums)               # [2,5,9]
+pairs = [("a", 3), ("b", 1)]
+pairs_sorted = sorted(pairs, key=lambda x: x[1])  # сортируем по второму</code></pre>
+
+        <h3>Ограничение</h3>
+        <ul>
+          <li>lambda — <b>одно выражение</b>, без многострочных if/for.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="t_oop" class="subpanel" style="display:none;">
+      <div class="card">
+        <h2>ООП</h2>
+        <ul>
+          <li><b>Класс</b> — шаблон/описание “объекта”.</li>
+          <li><b>Объект</b> — конкретный экземпляр класса.</li>
+          <li><code>self</code> — ссылка на текущий объект.</li>
+        </ul>
+
+        <pre><code>class Counter:
+    def __init__(self, start=0):
+        self.value = start
+
+    def inc(self):
+        self.value += 1
+        return self.value
+
+c = Counter(10)
+print(c.inc())  # 11</code></pre>
+
+        <div class="note">
+          Для управленцев достаточно понимать: “в объекте лежат <b>данные</b> + есть <b>методы</b>, которые с ними работают”.
+        </div>
+      </div>
+    </div>
+
+    <div id="t_exc" class="subpanel" style="display:none;">
+      <div class="card">
+        <h2>Исключения: try / except</h2>
+        <ul>
+          <li>Исключение — это “ошибка во время выполнения”.</li>
+          <li>Мы можем её перехватить и обработать, чтобы программа не падала.</li>
+        </ul>
+        <pre><code>try:
+    x = int(input())
+    print(10 / x)
+except ValueError:
+    print("Нужно ввести число!")
+except ZeroDivisionError:
+    print("На 0 делить нельзя!")</code></pre>
+
+        <h3>Когда использовать</h3>
+        <ul>
+          <li>Когда ввод пользователя может быть неправильным.</li>
+          <li>Когда читаем файлы/сеть (может не быть доступа).</li>
+        </ul>
+
+        <div class="note">
+          В учебных задачах важно научиться читать текст ошибки и понимать: “что сломалось” → “почему” → “как исправить”.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PLAY ===================== -->
+  <section id="play" class="panel" style="display:none;">
+    <div class="card">
+      <h2>Поиграть (тренажёр логики)</h2>
+      <div class="muted">Это не Python-исполнитель. Здесь мы “проигрываем” типичные конструкции на примерах.</div>
+      <div class="subtabs">
+        <div class="subtab active" data-sub="p_if">Ветвления</div>
+        <div class="subtab" data-sub="p_loops">Циклы</div>
+        <div class="subtab" data-sub="p_func">Функции</div>
+        <div class="subtab" data-sub="p_lambda">Lambda</div>
+        <div class="subtab" data-sub="p_oop">ООП</div>
+        <div class="subtab" data-sub="p_exc">Исключения</div>
+      </div>
+    </div>
+
+    <!-- Play: IF -->
+    <div id="p_if" class="subpanel">
+      <div class="row">
+        <div class="card">
+          <h3>1) Чётное / нечётное</h3>
+          <label>Введите целое число</label>
+          <input id="if_num" placeholder="например 7" />
+          <button id="btn_if_even">Проверить</button>
+          <div style="margin-top:12px;">
+            <div><b>Результат:</b> <span id="if_even_out" class="pill">—</span></div>
+            <div class="muted" style="margin-top:8px;">Логика: <code>x % 2 == 0</code>.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>2) “Оценка” по баллам (elif)</h3>
+          <label>Баллы (0–100)</label>
+          <input id="score_in" placeholder="например 83" />
+          <button id="btn_score">Определить</button>
+          <div style="margin-top:12px;">
+            <div><b>Категория:</b> <span id="score_out" class="pill">—</span></div>
+            <div class="muted" style="margin-top:8px;">
+              Правило: 90+ → A, 75–89 → B, 60–74 → C, иначе → D.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>3) Тернарный оператор</h3>
+        <label>Возраст</label>
+        <input id="age_in" placeholder="например 17" />
+        <button id="btn_age">Показать сообщение</button>
+        <div style="margin-top:12px;">
+          <div><b>msg =</b> <span id="age_out" class="pill">—</span></div>
+          <div class="muted" style="margin-top:8px;">
+            Как в Python: <code>msg = "доступ" if age &gt;= 18 else "нет доступа"</code>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Play: LOOPS -->
+    <div id="p_loops" class="subpanel" style="display:none;">
+      <div class="row">
+        <div class="card">
+          <h3>1) for + range</h3>
+          <label>n (сколько чисел вывести)</label>
+          <input id="range_n" placeholder="например 5" />
+          <button id="btn_range">Сгенерировать</button>
+          <div style="margin-top:12px;">
+            <div><b>Вывод:</b></div>
+            <pre id="range_out"><code>—</code></pre>
+          </div>
+          <div class="muted small">Подсказка: range(n) даёт 0..n-1.</div>
+        </div>
+
+        <div class="card">
+          <h3>2) Сумма 1..n (цикл)</h3>
+          <label>n</label>
+          <input id="sum_n" placeholder="например 10" />
+          <button id="btn_sum">Посчитать</button>
+          <div style="margin-top:12px;">
+            <div><b>Сумма:</b> <span id="sum_out" class="pill">—</span></div>
+            <div class="muted small" style="margin-top:8px;">Эквивалент Python-коду: <code>total=0; for i in range(1,n+1): total += i</code></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>3) while: обратный отсчёт</h3>
+        <label>Старт (целое)</label>
+        <input id="count_start" placeholder="например 5" />
+        <button id="btn_count">Показать “как печаталось бы”</button>
+        <div style="margin-top:12px;">
+          <pre id="count_out"><code>—</code></pre>
+        </div>
+        <div class="note">
+          Если забыть делать <code>x -= 1</code>, цикл станет бесконечным — это классическая ошибка :)
+        </div>
+      </div>
+    </div>
+
+    <!-- Play: FUNCTIONS -->
+    <div id="p_func" class="subpanel" style="display:none;">
+      <div class="row">
+        <div class="card">
+          <h3>1) Функция is_even(x)</h3>
+          <label>x</label>
+          <input id="fe_x" placeholder="например 14" />
+          <button id="btn_fe">Вызвать</button>
+          <div style="margin-top:12px;">
+            <div><b>is_even(x) →</b> <span id="fe_out" class="pill">—</span></div>
+          </div>
+          <div class="muted small" style="margin-top:8px;">В Python: <code>return x % 2 == 0</code></div>
+        </div>
+
+        <div class="card">
+          <h3>2) Аргументы по умолчанию</h3>
+          <label>name (можно пусто)</label>
+          <input id="greet_name" placeholder="например Даша" />
+          <button id="btn_greet">greet(name="гость")</button>
+          <div style="margin-top:12px;">
+            <div><b>Результат:</b> <span id="greet_out" class="pill">—</span></div>
+          </div>
+          <div class="muted small" style="margin-top:8px;">В Python: <code>def greet(name="гость")</code></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>3) Мини-задача: “функция-валидатор”</h3>
+        <div class="muted">Ввод: строка. Нужно решить — можно ли её преобразовать в int без ошибки.</div>
+        <label>Введите строку</label>
+        <input id="val_in" placeholder='например "123" или "12a"' />
+        <button id="btn_val">Проверить</button>
+        <div style="margin-top:12px;">
+          <div><b>Можно int(...)?</b> <span id="val_out" class="pill">—</span></div>
+          <div class="muted small" style="margin-top:8px;">Подсказка: в Python обычно делаем через <code>try: int(s)</code> / <code>except</code>.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Play: LAMBDA -->
+    <div id="p_lambda" class="subpanel" style="display:none;">
+      <div class="card">
+        <h3>1) Сортировка пар (key=lambda x: x[1])</h3>
+        <div class="muted">Пусть пары такие: <code>[("a",3),("b",1),("c",2)]</code>. Сортируем по числу.</div>
+        <button id="btn_sort_pairs">Отсортировать</button>
+        <div style="margin-top:12px;">
+          <div><b>Результат:</b> <span id="pairs_out" class="pill">—</span></div>
+        </div>
+        <div class="muted small" style="margin-top:8px;">В Python: <code>sorted(pairs, key=lambda x: x[1])</code></div>
+      </div>
+
+      <div class="card">
+        <h3>2) “lambda как маленькое правило”</h3>
+        <div class="row">
+          <div class="card">
+            <div class="muted">Выберите правило</div>
+            <select id="rule_sel">
+              <option value="square">lambda x: x*x</option>
+              <option value="abs">lambda x: abs(x)</option>
+              <option value="plus10">lambda x: x+10</option>
+            </select>
+            <label>x</label>
+            <input id="rule_x" placeholder="например -3" />
+            <button id="btn_rule">Применить</button>
+          </div>
+          <div class="card">
+            <div><b>Результат:</b> <span id="rule_out" class="pill">—</span></div>
+            <div class="muted small" style="margin-top:8px;">Смысл: лямбда — это “функция без имени”, удобно передавать как параметр.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Play: OOP -->
+    <div id="p_oop" class="subpanel" style="display:none;">
+      <div class="card">
+        <h3>Counter — объект с состоянием</h3>
+        <div class="muted">Мы “симулируем” класс Counter: внутри хранится value, метод inc() увеличивает на 1.</div>
+        <div class="row">
+          <div class="card">
+            <label>start</label>
+            <input id="counter_start" placeholder="например 10" />
+            <button id="btn_counter_new">Создать Counter(start)</button>
+            <button id="btn_counter_inc" style="margin-top:8px;">c.inc()</button>
+            <button id="btn_counter_reset" style="margin-top:8px;">Сбросить</button>
+          </div>
+          <div class="card">
+            <div><b>c.value:</b> <span id="counter_val" class="pill">—</span></div>
+            <div class="muted small" style="margin-top:8px;">
+              В Python: <code>self.value</code> хранится внутри объекта и меняется методом.
+            </div>
+            <pre><code>class Counter:
+    def __init__(self, start=0):
+        self.value = start
+    def inc(self):
+        self.value += 1
+        return self.value</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Play: EXCEPTIONS -->
+    <div id="p_exc" class="subpanel" style="display:none;">
+      <div class="row">
+        <div class="card">
+          <h3>1) Деление 10 / x с обработкой ошибок</h3>
+          <label>x (введите что угодно)</label>
+          <input id="div_in" placeholder='например 0 или "abc"' />
+          <button id="btn_div">Запустить</button>
+          <div style="margin-top:12px;">
+            <div><b>Вывод:</b> <span id="div_out" class="pill">—</span></div>
+          </div>
+          <div class="muted small" style="margin-top:8px;">Python-логика: <code>int(...)</code> может дать ValueError, деление на 0 — ZeroDivisionError.</div>
+        </div>
+
+        <div class="card">
+          <h3>2) “Прочитать ключ из словаря” безопасно</h3>
+          <div class="muted">Словарь: <code>{"name":"Маша","age":20}</code></div>
+          <label>Ключ</label>
+          <input id="dict_key2" placeholder="например city" />
+          <button id="btn_dict2">d.get(key)</button>
+          <div style="margin-top:12px;">
+            <div><b>Результат:</b> <span id="dict_out2" class="pill">—</span></div>
+            <div class="muted small" style="margin-top:8px;">Это “без исключения”: если ключа нет — будет None.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== QUIZ ===================== -->
+  <section id="quiz" class="panel" style="display:none;">
+    <div class="card">
+      <h2>Самопроверка: “предскажи результат / выбери правильный код”</h2>
+      <div class="muted">
+        Формат: один вопрос → выбрать вариант → проверить → объяснение. Есть отдельные банки по темам.
+      </div>
+      <div class="subtabs">
+        <div class="subtab active" data-sub="q_if">Ветвления</div>
+        <div class="subtab" data-sub="q_loops">Циклы</div>
+        <div class="subtab" data-sub="q_func">Функции</div>
+        <div class="subtab" data-sub="q_lambda">Lambda</div>
+        <div class="subtab" data-sub="q_oop">ООП</div>
+        <div class="subtab" data-sub="q_exc">Исключения</div>
+        <div class="subtab" data-sub="q_mix">Смешанный</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div id="quizBox"></div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+        <button id="btnCheck" style="flex:1;">Проверить</button>
+        <button id="btnNext" style="flex:1;">Следующий</button>
+        <button id="btnReset" style="flex:1;">Сначала</button>
+      </div>
+
+      <div style="margin-top:12px;">
+        <div><b>Счёт:</b> <span id="score" class="pill">0/0</span></div>
+        <div id="feedback" style="margin-top:10px;"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  // ========= Tabs =========
+  const topTabs = document.querySelectorAll('.tab');
+  const topPanels = {
+    theory: document.getElementById('theory'),
+    play: document.getElementById('play'),
+    quiz: document.getElementById('quiz'),
+  };
+  topTabs.forEach(t => t.addEventListener('click', () => {
+    topTabs.forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    const id = t.dataset.tab;
+    Object.keys(topPanels).forEach(k => topPanels[k].style.display = (k === id ? '' : 'none'));
+  }));
+
+  function wireSubtabs(scopeEl) {
+    const subtabs = scopeEl.querySelectorAll('.subtab');
+    subtabs.forEach(st => st.addEventListener('click', () => {
+      subtabs.forEach(x => x.classList.remove('active'));
+      st.classList.add('active');
+      const id = st.dataset.sub;
+      scopeEl.querySelectorAll('.subpanel').forEach(p => p.style.display = (p.id === id ? '' : 'none'));
+    }));
+  }
+  wireSubtabs(document.getElementById('theory'));
+  wireSubtabs(document.getElementById('play'));
+  wireSubtabs(document.getElementById('quiz'));
+
+  // ========= Play: IF =========
+  document.getElementById('btn_if_even').addEventListener('click', () => {
+    const x = Number.parseInt(document.getElementById('if_num').value, 10);
+    document.getElementById('if_even_out').textContent = Number.isNaN(x) ? "введите целое" : ((x % 2 === 0) ? "четное" : "нечетное");
+  });
+
+  document.getElementById('btn_score').addEventListener('click', () => {
+    const s = Number.parseInt(document.getElementById('score_in').value, 10);
+    let out = "введите 0..100";
+    if (!Number.isNaN(s) && s >= 0 && s <= 100) {
+      if (s >= 90) out = "A";
+      else if (s >= 75) out = "B";
+      else if (s >= 60) out = "C";
+      else out = "D";
+    }
+    document.getElementById('score_out').textContent = out;
+  });
+
+  document.getElementById('btn_age').addEventListener('click', () => {
+    const a = Number.parseInt(document.getElementById('age_in').value, 10);
+    document.getElementById('age_out').textContent = Number.isNaN(a) ? "введите целое" : ((a >= 18) ? "доступ" : "нет доступа");
+  });
+
+  // ========= Play: LOOPS =========
+  document.getElementById('btn_range').addEventListener('click', () => {
+    const n = Number.parseInt(document.getElementById('range_n').value, 10);
+    if (Number.isNaN(n) || n < 0 || n > 50) {
+      document.getElementById('range_out').innerHTML = "<code>Введите n от 0 до 50</code>";
+      return;
+    }
+    const arr = Array.from({length:n}, (_,i)=>i);
+    document.getElementById('range_out').innerHTML = "<code>" + arr.join(" ") + "</code>";
+  });
+
+  document.getElementById('btn_sum').addEventListener('click', () => {
+    const n = Number.parseInt(document.getElementById('sum_n').value, 10);
+    if (Number.isNaN(n) || n < 0 || n > 200000) {
+      document.getElementById('sum_out').textContent = "введите n ≥ 0";
+      return;
+    }
+    // sum 1..n
+    const total = (n * (n + 1)) / 2;
+    document.getElementById('sum_out').textContent = String(total);
+  });
+
+  document.getElementById('btn_count').addEventListener('click', () => {
+    const start = Number.parseInt(document.getElementById('count_start').value, 10);
+    if (Number.isNaN(start) || start < 0 || start > 50) {
+      document.getElementById('count_out').innerHTML = "<code>Введите start от 0 до 50</code>";
+      return;
+    }
+    let x = start;
+    const lines = [];
+    while (x > 0) { lines.push(String(x)); x -= 1; }
+    lines.push("Стоп");
+    document.getElementById('count_out').innerHTML = "<code>" + lines.join("\n") + "</code>";
+  });
+
+  // ========= Play: FUNCTIONS =========
+  document.getElementById('btn_fe').addEventListener('click', () => {
+    const x = Number.parseInt(document.getElementById('fe_x').value, 10);
+    document.getElementById('fe_out').textContent = Number.isNaN(x) ? "введите целое" : String(x % 2 === 0);
+  });
+
+  document.getElementById('btn_greet').addEventListener('click', () => {
+    const name = document.getElementById('greet_name').value.trim();
+    const who = name.length ? name : "гость";
+    document.getElementById('greet_out').textContent = `Привет, ${who}!`;
+  });
+
+  document.getElementById('btn_val').addEventListener('click', () => {
+    const s = document.getElementById('val_in').value.trim();
+    if (!s.length) { document.getElementById('val_out').textContent = "введите строку"; return; }
+    // "Python-like" int parsing: allow leading +/-, digits only
+    const ok = /^[+-]?\d+$/.test(s);
+    document.getElementById('val_out').textContent = ok ? "Да" : "Нет";
+  });
+
+  // ========= Play: LAMBDA =========
+  document.getElementById('btn_sort_pairs').addEventListener('click', () => {
+    const pairs = [["a",3],["b",1],["c",2]];
+    pairs.sort((p,q)=>p[1]-q[1]);
+    document.getElementById('pairs_out').textContent = JSON.stringify(pairs).replaceAll('[["','[("').replaceAll('"],[','"), (').replaceAll(']]','")]').replaceAll('",', '", ');
+  });
+
+  document.getElementById('btn_rule').addEventListener('click', () => {
+    const x = Number.parseFloat(document.getElementById('rule_x').value);
+    if (Number.isNaN(x)) { document.getElementById('rule_out').textContent = "введите число"; return; }
+    const rule = document.getElementById('rule_sel').value;
+    let y = x;
+    if (rule === "square") y = x * x;
+    else if (rule === "abs") y = Math.abs(x);
+    else if (rule === "plus10") y = x + 10;
+    document.getElementById('rule_out').textContent = String(y);
+  });
+
+  // ========= Play: OOP =========
+  let counterValue = null;
+
+  function renderCounter() {
+    document.getElementById('counter_val').textContent = (counterValue === null) ? "—" : String(counterValue);
+  }
+  document.getElementById('btn_counter_new').addEventListener('click', () => {
+    const start = Number.parseInt(document.getElementById('counter_start').value, 10);
+    counterValue = Number.isNaN(start) ? 0 : start;
+    renderCounter();
+  });
+  document.getElementById('btn_counter_inc').addEventListener('click', () => {
+    if (counterValue === null) counterValue = 0;
+    counterValue += 1;
+    renderCounter();
+  });
+  document.getElementById('btn_counter_reset').addEventListener('click', () => {
+    counterValue = null;
+    renderCounter();
+  });
+  renderCounter();
+
+  // ========= Play: EXCEPTIONS =========
+  document.getElementById('btn_div').addEventListener('click', () => {
+    const raw = document.getElementById('div_in').value.trim();
+    // emulate try: x=int(raw); print(10/x)
+    if (!/^[+-]?\d+$/.test(raw)) { document.getElementById('div_out').textContent = "ValueError: нужно число"; return; }
+    const x = Number.parseInt(raw, 10);
+    if (x === 0) { document.getElementById('div_out').textContent = "ZeroDivisionError: на 0 нельзя"; return; }
+    document.getElementById('div_out').textContent = String(10 / x);
+  });
+
+  document.getElementById('btn_dict2').addEventListener('click', () => {
+    const d = { name:"Маша", age:20 };
+    const k = document.getElementById('dict_key2').value.trim();
+    const v = Object.prototype.hasOwnProperty.call(d, k) ? d[k] : null;
+    document.getElementById('dict_out2').textContent = (v === null ? "None" : JSON.stringify(v));
+  });
+
+  // ========= Quiz banks =========
+  const bank_if = [
+    { q:`Что выведет?\n\nx = 0\nif x:\n    print("A")\nelse:\n    print("B")`,
+      options:["A","B","ничего","Ошибка"], correct:1,
+      explain:`0 “ложное” значение, условие не выполнится → else.` },
+    { q:`Что выведет?\n\nx = 7\nif x % 2 == 0:\n    print("четное")\nelse:\n    print("нечетное")`,
+      options:["четное","нечетное","True","Ошибка"], correct:1,
+      explain:`7%2 != 0 → ветка else.` },
+    { q:`Выберите корректное условие “x между 0 и 10 включительно”`,
+      options:["0 < x < 10","0 <= x <= 10","x in (0..10)","0 <= x and x <= 10 and 10 <= x"], correct:1,
+      explain:`Питоновский вариант: 0 <= x <= 10.` },
+    { q:`Что выведет?\n\nx = 95\nif x >= 90:\n    print("A")\nelif x >= 75:\n    print("B")\nelse:\n    print("C")`,
+      options:["A","B","C","Ошибка"], correct:0,
+      explain:`Первое условие True, elif уже не проверяются.` },
+  ];
+
+  const bank_loops = [
+    { q:`Что выведет?\n\nfor i in range(3):\n    print(i)`,
+      options:["1 2 3","0 1 2","0 1 2 3","Ошибка"], correct:1,
+      explain:`range(3) даёт 0,1,2.` },
+    { q:`Сколько раз выполнится цикл?\n\nfor i in range(2, 7, 2):\n    pass`,
+      options:["2","3","4","5"], correct:1,
+      explain:`i = 2,4,6 → 3 раза.` },
+    { q:`Что выведет?\n\nx = 3\nwhile x > 0:\n    x -= 1\nprint(x)`,
+      options:["3","2","1","0"], correct:3,
+      explain:`После цикла x станет 0.` },
+    { q:`Что выведет?\n\nfor x in [1,2,3,4,5]:\n    if x == 3:\n        continue\n    if x == 5:\n        break\n    print(x)`,
+      options:["1 2 3 4","1 2 4","1 2 4 5","1 2"], correct:1,
+      explain:`3 пропускаем, на 5 выходим, печатаются 1 2 4.` },
+  ];
+
+  const bank_func = [
+    { q:`Что выведет?\n\ndef f(x):\n    return x + 1\n\nprint(f(3))`,
+      options:["3","4","31","Ошибка"], correct:1,
+      explain:`return x+1 → 4.` },
+    { q:`Что выведет?\n\ndef greet(name="гость"):\n    return "Привет, " + name\n\nprint(greet())`,
+      options:["Привет, гость","Привет, ","гость","Ошибка"], correct:0,
+      explain:`Если аргумент не передали, берётся значение по умолчанию.` },
+    { q:`Что выведет?\n\ndef is_even(x):\n    return x % 2 == 0\n\nprint(is_even(9))`,
+      options:["True","False","0","Ошибка"], correct:1,
+      explain:`9%2 != 0 → False.` },
+  ];
+
+  const bank_lambda = [
+    { q:`Что делает этот код?\n\npairs = [("a",3),("b",1)]\nprint(sorted(pairs, key=lambda x: x[1]))`,
+      options:["сортирует по букве","сортирует по числу (2-й элемент)","ничего","Ошибка"], correct:1,
+      explain:`key берёт второй элемент пары.` },
+    { q:`Выберите корректную lambda, которая возвращает квадрат x`,
+      options:["lambda: x*x","lambda x: x**2","lambda x, y: x**2","lambda x: return x*x"], correct:1,
+      explain:`В lambda нет return; один параметр x, выражение x**2.` },
+  ];
+
+  const bank_oop = [
+    { q:`Что такое self в методе класса?`,
+      options:["имя класса","ссылка на текущий объект","ключевое слово Python","ошибка синтаксиса"], correct:1,
+      explain:`self — первый параметр метода: текущий экземпляр.` },
+    { q:`Что выведет?\n\nclass A:\n    def __init__(self):\n        self.x = 1\n\na = A()\nprint(a.x)`,
+      options:["A","1","x","Ошибка"], correct:1,
+      explain:`В __init__ создали поле x=1.` },
+  ];
+
+  const bank_exc = [
+    { q:`Что произойдёт?\n\nx = int("12a")`,
+      options:["x станет 12","ValueError","TypeError","ничего"], correct:1,
+      explain:`Нельзя преобразовать "12a" в int → ValueError.` },
+    { q:`Что выведет?\n\ntry:\n    print(10/0)\nexcept ZeroDivisionError:\n    print("no")`,
+      options:["inf","no","0","Ошибка"], correct:1,
+      explain:`Деление на 0 даёт ZeroDivisionError → печатаем no.` },
+    { q:`Зачем нужен try/except в задачах с вводом?`,
+      options:["ускорить код","поймать ошибки неправильного ввода","сделать код короче","нельзя использовать"], correct:1,
+      explain:`Чтобы программа не падала и могла сообщить, что ввод неверный.` },
+  ];
+
+  const bank_mix = [
+    { q:`Что выведет?\n\nfor i in range(1, 4):\n    if i == 2:\n        print("X")\n    else:\n        print(i)`,
+      options:["1 2 3","1 X 3","X X X","1 X 2 X 3"], correct:1,
+      explain:`i=1 печатаем 1, i=2 печатаем X, i=3 печатаем 3.` },
+    { q:`Что вернёт функция?\n\ndef f(x):\n    if x > 0:\n        return "plus"\n    return "no plus"\n\nprint(f(0))`,
+      options:["plus","no plus","0","Ошибка"], correct:1,
+      explain:`x>0 False → возвращаем "no plus".` },
+    { q:`Что выведет?\n\nnums = [5,2,9]\nprint(sorted(nums))`,
+      options:["[9,5,2]","[2,5,9]","2 5 9","Ошибка"], correct:1,
+      explain:`sorted возвращает новый отсортированный список.` },
+  ];
+
+  let currentBank = bank_if;
+  let idx = 0;
+  let scoreOk = 0;
+  let scoreTotal = 0;
+
+  function setQuizBank(which) {
+    const m = { q_if:bank_if, q_loops:bank_loops, q_func:bank_func, q_lambda:bank_lambda, q_oop:bank_oop, q_exc:bank_exc, q_mix:bank_mix };
+    currentBank = m[which] || bank_if;
+    idx = 0; scoreOk = 0; scoreTotal = 0;
+    renderQuiz();
+  }
+
+  // Hook quiz subtabs (override default wireSubtabs behavior for quiz)
+  document.querySelectorAll('#quiz .subtab').forEach(st => {
+    st.addEventListener('click', () => setQuizBank(st.dataset.sub));
+  });
+
+  function renderQuiz() {
+    const item = currentBank[idx];
+    const box = document.getElementById('quizBox');
+    box.innerHTML = `
+      <div class="muted">Вопрос ${idx+1} из ${currentBank.length}</div>
+      <pre><code>${item.q}</code></pre>
+      <div style="margin-top:10px;">
+        ${item.options.map((opt, i) => `
+          <label style="font-weight:400; display:block; margin:6px 0;">
+            <input type="radio" name="quiz" value="${i}" style="width:auto; margin-right:8px;">
+            ${opt}
+          </label>
+        `).join("")}
+      </div>
+    `;
+    document.getElementById('feedback').innerHTML = "";
+    document.getElementById('score').textContent = `${scoreOk}/${scoreTotal}`;
+  }
+
+  function getSelected() {
+    const el = document.querySelector('input[name="quiz"]:checked');
+    return el ? Number(el.value) : null;
+  }
+
+  document.getElementById('btnCheck').addEventListener('click', () => {
+    const sel = getSelected();
+    const item = currentBank[idx];
+    if (sel === null) {
+      document.getElementById('feedback').innerHTML = `<span class="bad">Выберите вариант.</span>`;
+      return;
+    }
+    scoreTotal += 1;
+    if (sel === item.correct) {
+      scoreOk += 1;
+      document.getElementById('feedback').innerHTML = `<div class="ok">Верно.</div><div class="muted">${item.explain}</div>`;
+    } else {
+      document.getElementById('feedback').innerHTML = `<div class="bad">Неверно.</div><div class="muted">${item.explain}</div>`;
+    }
+    document.getElementById('score').textContent = `${scoreOk}/${scoreTotal}`;
+  });
+
+  document.getElementById('btnNext').addEventListener('click', () => {
+    idx = (idx + 1) % currentBank.length;
+    renderQuiz();
+  });
+
+  document.getElementById('btnReset').addEventListener('click', () => {
+    idx = 0; scoreOk = 0; scoreTotal = 0;
+    renderQuiz();
+  });
+
+  // initial
+  renderQuiz();
+</script>
+</body>
+</html>
